@@ -82,6 +82,7 @@ All configuration is done via environment variables:
 | `MODE` | `"watch"` | Operation mode: `once`, `watch`, or `cron` |
 | `CRON_SCHEDULE` | `"*/5 * * * *"` | Cron schedule (only in `cron` mode) |
 | `MOVE_SUBDIRS` | `"false"` | Preserve subdirectory structure in S3 |
+| `WATCH_GRACE_PERIOD` | `"10"` | Seconds to ignore inotify events after startup (prevents re-uploading existing files) |
 | `MC_EXTRA_ARGS` | `""` | Additional flags to pass to `mc cp` |
 
 ## Modes
