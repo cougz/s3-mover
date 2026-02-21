@@ -40,8 +40,11 @@ upload_file() {
     if mc cp $MC_EXTRA_ARGS "$file" "$dest"; then
         log "OK: $(basename "$file")"
         if [ "$DELETE_AFTER_UPLOAD" = "true" ]; then
-            rm -f "$file"
-            log "Deleted local: $file"
+            if rm -f "$file" 2>/dev/null; then
+                log "Deleted local: $file"
+            else
+                warn "Could not delete $file (permission denied or file removed)"
+            fi
         fi
     else
         warn "FAILED: $file — will retry next cycle"
