@@ -88,6 +88,12 @@ fi
 if [ "$MODE" = "watch" ]; then
     log "Watching $SOURCE_PATH for '$FILE_PATTERN'"
     log "Initial scan skipped in watch mode - only monitoring for new/changed files"
+    
+    # Startup grace period to ignore initial inotify events from Docker volume mount
+    START_TIME=$(date +%s)
+    GRACE_SECONDS="${WATCH_GRACE_PERIOD:-10}"
+    log "Grace period: ${GRACE_SECONDS}s - ignoring events before $(date -d @"$((START_TIME + GRACE_SECONDS))" -u '+%H:%M:%S' UTC)"
+    
     inotifywait -m -r \
         --event close_write \
         --event moved_to \
@@ -95,7 +101,15 @@ if [ "$MODE" = "watch" ]; then
         "$SOURCE_PATH" | \
     while IFS= read -r file; do
         case "$file" in
-            $FILE_PATTERN) upload_file "$file" ;;
+            $FILE_PATTERN)
+                # Skip files modified during grace period (startup events)
+                file_mtime=$(stat -c %Y "$file" 2>/dev/null || echo 0)
+                if [ "$file_mtime" -ge "$((START_TIME + GRACE_SECONDS))" ]; then
+                    upload_file "$file"
+                else
+                    log "Skipping: $file (old file from before watch start)"
+                fi
+                ;;
             *) : ;;
         esac
     done
