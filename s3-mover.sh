@@ -87,7 +87,7 @@ fi
 
 if [ "$MODE" = "watch" ]; then
     log "Watching $SOURCE_PATH for '$FILE_PATTERN'"
-    scan_and_upload
+    log "Initial scan skipped in watch mode - only monitoring for new/changed files"
     inotifywait -m -r \
         --event close_write \
         --event moved_to \
