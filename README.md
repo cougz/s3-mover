@@ -18,13 +18,13 @@ A minimal Docker sidecar that watches a shared volume for files and uploads them
 version: '3.8'
 
 volumes:
-  app-data:
+  ${VOLUME_NAME:-data}:
 
 services:
   your-app:
     image: your-app:latest
     volumes:
-      - app-data:/app/output
+      - ${VOLUME_NAME:-data}:/app/output
 
   s3-mover:
     image: ghcr.io/cougz/s3-mover:latest
@@ -36,8 +36,9 @@ services:
       S3_BUCKET: "${S3_BUCKET}"
       SOURCE_PATH: "/data"
       FILE_PATTERN: "*.json"
+      VOLUME_NAME: "${VOLUME_NAME:-data}"
     volumes:
-      - app-data:/data
+      - ${VOLUME_NAME:-data}:/data
 ```
 
 Copy `.env.example` to `.env` and fill in your credentials:
@@ -84,6 +85,7 @@ All configuration is done via environment variables:
 | `MOVE_SUBDIRS` | `"false"` | Preserve subdirectory structure in S3 |
 | `WATCH_GRACE_PERIOD` | `"10"` | Seconds to ignore inotify events after startup (prevents re-uploading existing files) |
 | `MC_EXTRA_ARGS` | `""` | Additional flags to pass to `mc cp` |
+| `VOLUME_NAME` | `"data"` | Docker volume name (used in compose.yml for sidecar deployments) |
 
 ## Modes
 
