@@ -1,5 +1,5 @@
 volumes:
-  ${VOLUME_NAME:-data}:
+  data:
 
 services:
   s3-mover:
@@ -16,4 +16,4 @@ services:
       DELETE_AFTER_UPLOAD: "true"
       MODE:                "watch"
     volumes:
-      - ${VOLUME_NAME:-data}:/data
+      - data:/data
