@@ -92,7 +92,7 @@ if [ "$MODE" = "watch" ]; then
     # Startup grace period to ignore initial inotify events from Docker volume mount
     START_TIME=$(date +%s)
     GRACE_SECONDS="${WATCH_GRACE_PERIOD:-10}"
-    log "Grace period: ${GRACE_SECONDS}s - ignoring events before $(date -d @"$((START_TIME + GRACE_SECONDS))" -u '+%H:%M:%S' UTC)"
+    log "Grace period: ${GRACE_SECONDS}s - ignoring events before"
     
     inotifywait -m -r \
         --event close_write \
