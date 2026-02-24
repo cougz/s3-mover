@@ -1,5 +1,5 @@
 volumes:
-  netzbremse-results:
+  ${VOLUME_NAME:-data}:
 
 services:
   s3-mover:
@@ -16,4 +16,4 @@ services:
       DELETE_AFTER_UPLOAD: "true"
       MODE:                "watch"
     volumes:
-      - netzbremse-results:/data
+      - ${VOLUME_NAME:-data}:/data
